@@ -39,7 +39,7 @@ def sram_off(addr):
     global sram_block
     if addr < 0x40000000 or addr >= 0x50000000:
         return -1
-    block = addr & ~0xFFFFF
+    block = addr & ~0xFFFF
     assert sram_block in (0, block)
 
     sram_block = block
@@ -64,6 +64,7 @@ def read_elf(efile):
         if h.p_type == "PT_LOAD":
             soff = sram_off(h.p_paddr)
             doff = dram_off(h.p_paddr)
+            print(f"sram_off: {soff:x} dram_off: {doff:x}")
             if soff >= 0:
                 buf = sram
                 off = soff
