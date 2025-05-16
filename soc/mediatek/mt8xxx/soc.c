@@ -195,7 +195,7 @@ static void enable_mpu(void)
 	static const uint32_t mpu[][2] = {
 		{ 0x00000000, 0x06000 },          /* inaccessible null region */
 		{ 0x10000000, 0x06f00 },          /* MMIO registers */
-		{ 0x1d000000, 0x06000 },          /* inaccessible */
+		{ 0x1f000000, 0x06000 },          /* inaccessible */
 		{ SRAM_START, 0xf7f00 },          /* cached SRAM */
 		{ SRAM_END,   0x06000 },          /* inaccessible */
 		{ DRAM_START, 0xf7f00 },          /* cached DRAM */
