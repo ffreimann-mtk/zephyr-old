@@ -29,7 +29,7 @@
 	afe_tdm_out: afe_tdm_out {
 		compatible = "mediatek,afe";
 		afe-name = "TDM_OUT";
-		dai-id = <2>;
+		dai-id = <4>;
 		downlink;
 		base = <0x00000000 0x11220374>;
 		cur = <0x00000000 0x11220378>;
@@ -42,7 +42,7 @@
 	afe_awb: afe_awb {
 		compatible = "mediatek,afe";
 		afe-name = "AWB";
-		dai-id = <3>;
+		dai-id = <2>;
 		base = <0x00000000 0x11220070>;
 		cur = <0x00000000 0x1122007c>;
 		end = <0x00000000 0x11220078>;
@@ -56,7 +56,7 @@
 	afe_vul: afe_vul {
 		compatible = "mediatek,afe";
 		afe-name = "VUL";
-		dai-id = <4>;
+		dai-id = <3>;
 		base = <0x00000000 0x11220080>;
 		cur = <0x00000000 0x1122008c>;
 		end = <0x00000000 0x11220088>;
