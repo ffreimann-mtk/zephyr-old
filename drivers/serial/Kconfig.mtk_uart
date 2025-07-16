@@ -1,0 +1,13 @@
+# MediaTek UART
+# Copyright (c) 2025, MediaTek
+# SPDX-License-Identifier: Apache-2.0
+
+config UART_MT8365
+	bool "MediaTek MT8365 UART driver"
+	default y
+	depends on DT_HAS_MEDIATEK_MT8365_UART_ENABLED
+   	select PINCTRL
+	select SERIAL_HAS_DRIVER
+	select SERIAL_SUPPORT_INTERRUPT
+	help
+	  Enable the MediaTek MT8365 UART driver.
