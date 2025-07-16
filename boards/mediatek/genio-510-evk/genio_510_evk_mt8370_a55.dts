@@ -16,11 +16,31 @@
 	compatible = "mediatek,mt8370-evk";
 
 	aliases {
+		trigger = &trigger_gpio;
+		response = &response_gpio;
 	};
 
 	chosen {
 		zephyr,console = &uart1;
 		zephyr,sram = &dram;
+	};
+
+	trigger {
+		compatible = "gpio-keys";
+
+		trigger_gpio: trigger-gpio {
+			gpios = <&gpio32_63 6 GPIO_ACTIVE_LOW>;  /* GPIO 38 */
+			label = "Event Trigger";
+		};
+    };
+
+	response {
+		compatible = "gpio-leds";
+
+		response_gpio: response-pgio {
+			gpios = <&gpio32_63 8 GPIO_ACTIVE_LOW>;  /* GPIO 40 */
+			label = "Event Response";
+		};
 	};
 
 	cpus {
@@ -53,3 +73,16 @@
     clock-frequency = <27>;
 	status = "okay";
 };
+
+
+&gpio32_63 {
+	status = "okay";
+};
+
+/*
+&i2s {
+	pinctrl-0 = <&i2s_default>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+*/

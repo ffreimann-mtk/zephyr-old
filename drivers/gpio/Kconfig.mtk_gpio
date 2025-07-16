@@ -9,3 +9,11 @@ config GPIO_MT8365
 	select PINCTRL
 	help
 	  Enable the MediaTek MT8365 GPIO driver.
+
+config GPIO_MT8370
+	bool "MediaTek MT8370 GPIO driver"
+	default y
+	depends on DT_HAS_MEDIATEK_MT8370_GPIO_ENABLED
+	select PINCTRL
+	help
+	  Enable the MediaTek MT8370 GPIO driver.

@@ -4,81 +4,89 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#define DT_DRV_COMPAT mediatek_mt8365_gpio
+#define DT_DRV_COMPAT mediatek_mt8370_gpio
 
 
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/gpio/gpio_utils.h>
-#include <zephyr/drivers/interrupt_controller/intc_mt8365_eint.h>
+#include <zephyr/drivers/interrupt_controller/intc_mt8370_eint.h>
 #include <zephyr/drivers/pinctrl.h>
 #include <zephyr/sys/slist.h>
 
 
-#define GPIO_OFFSET_DIN_0				0x0000
-#define GPIO_OFFSET_DIN_1				0x0010
-#define GPIO_OFFSET_DIN_2				0x0020
-#define GPIO_OFFSET_DIN_3				0x0030
-#define GPIO_OFFSET_DIN_4				0x0040
-#define GPIO_OFFSET_DOUT_0				0x00a0
-#define GPIO_OFFSET_DOUT_0_SET			0x00a4
-#define GPIO_OFFSET_DOUT_0_CLR			0x00a8
-#define GPIO_OFFSET_DOUT_1				0x00b0
-#define GPIO_OFFSET_DOUT_1_SET			0x00b4
-#define GPIO_OFFSET_DOUT_1_CLR			0x00b8
-#define GPIO_OFFSET_DOUT_2				0x00c0
-#define GPIO_OFFSET_DOUT_2_SET			0x00c4
-#define GPIO_OFFSET_DOUT_2_CLR			0x00c8
-#define GPIO_OFFSET_DOUT_3				0x00d0
-#define GPIO_OFFSET_DOUT_3_SET			0x00d4
-#define GPIO_OFFSET_DOUT_3_CLR			0x00d8
-#define GPIO_OFFSET_DOUT_4				0x00e0
-#define GPIO_OFFSET_DOUT_4_SET			0x00e4
-#define GPIO_OFFSET_DOUT_4_CLR			0x00e8
-#define GPIO_OFFSET_DIR_0				0x0140
-#define GPIO_OFFSET_DIR_0_SET			0x0144
-#define GPIO_OFFSET_DIR_0_CLR			0x0148
-#define GPIO_OFFSET_DIR_1				0x0150
-#define GPIO_OFFSET_DIR_1_SET			0x0154
-#define GPIO_OFFSET_DIR_1_CLR			0x0158
-#define GPIO_OFFSET_DIR_2				0x0160
-#define GPIO_OFFSET_DIR_2_SET			0x0164
-#define GPIO_OFFSET_DIR_2_CLR			0x0168
-#define GPIO_OFFSET_DIR_3				0x0170
-#define GPIO_OFFSET_DIR_3_SET			0x0174
-#define GPIO_OFFSET_DIR_3_CLR			0x0178
-#define GPIO_OFFSET_DIR_4				0x0180
-#define GPIO_OFFSET_DIR_4_SET			0x0184
-#define GPIO_OFFSET_DIR_4_CLR			0x0188
-#define GPIO_OFFSET_PULL_EN_0			0x0860
-#define GPIO_OFFSET_PULL_EN_0_SET		0x0864
-#define GPIO_OFFSET_PULL_EN_0_CLR		0x0868
-#define GPIO_OFFSET_PULL_EN_1			0x0870
-#define GPIO_OFFSET_PULL_EN_1_SET		0x0874
-#define GPIO_OFFSET_PULL_EN_1_CLR		0x0878
-#define GPIO_OFFSET_PULL_EN_2			0x0880
-#define GPIO_OFFSET_PULL_EN_2_SET		0x0884
-#define GPIO_OFFSET_PULL_EN_2_CLR		0x0888
-#define GPIO_OFFSET_PULL_EN_3			0x0890
-#define GPIO_OFFSET_PULL_EN_3_SET		0x0894
-#define GPIO_OFFSET_PULL_EN_3_CLR		0x0898
-#define GPIO_OFFSET_PULL_EN_4			0x08a0
-#define GPIO_OFFSET_PULL_EN_4_SET		0x08a4
-#define GPIO_OFFSET_PULL_EN_4_CLR		0x08a8
-#define GPIO_OFFSET_PULL_SEL_0			0x0900
-#define GPIO_OFFSET_PULL_SEL_0_SET		0x0904
-#define GPIO_OFFSET_PULL_SEL_0_CLR		0x0908
-#define GPIO_OFFSET_PULL_SEL_1			0x0910
-#define GPIO_OFFSET_PULL_SEL_1_SET		0x0914
-#define GPIO_OFFSET_PULL_SEL_1_CLR		0x0918
-#define GPIO_OFFSET_PULL_SEL_2			0x0920
-#define GPIO_OFFSET_PULL_SEL_2_SET		0x0924
-#define GPIO_OFFSET_PULL_SEL_2_CLR		0x0928
-#define GPIO_OFFSET_PULL_SEL_3			0x0930
-#define GPIO_OFFSET_PULL_SEL_3_SET		0x0934
-#define GPIO_OFFSET_PULL_SEL_3_CLR		0x0938
-#define GPIO_OFFSET_PULL_SEL_4			0x0940
-#define GPIO_OFFSET_PULL_SEL_4_SET		0x0944
-#define GPIO_OFFSET_PULL_SEL_4_CLR		0x0948
+#define GPIO_OFFSET_DIN_0				0x0200
+#define GPIO_OFFSET_DIN_1				0x0210
+#define GPIO_OFFSET_DIN_2				0x0220
+#define GPIO_OFFSET_DIN_3				0x0230
+#define GPIO_OFFSET_DIN_4				0x0240
+#define GPIO_OFFSET_DIN_5				0x0250
+#define GPIO_OFFSET_DOUT_0				0x0100
+#define GPIO_OFFSET_DOUT_0_SET			0x0104
+#define GPIO_OFFSET_DOUT_0_CLR			0x0108
+#define GPIO_OFFSET_DOUT_1				0x0110
+#define GPIO_OFFSET_DOUT_1_SET			0x0114
+#define GPIO_OFFSET_DOUT_1_CLR			0x0118
+#define GPIO_OFFSET_DOUT_2				0x0120
+#define GPIO_OFFSET_DOUT_2_SET			0x0124
+#define GPIO_OFFSET_DOUT_2_CLR			0x0128
+#define GPIO_OFFSET_DOUT_3				0x0130
+#define GPIO_OFFSET_DOUT_3_SET			0x0134
+#define GPIO_OFFSET_DOUT_3_CLR			0x0138
+#define GPIO_OFFSET_DOUT_4				0x0140
+#define GPIO_OFFSET_DOUT_4_SET			0x0144
+#define GPIO_OFFSET_DOUT_4_CLR			0x0148
+#define GPIO_OFFSET_DOUT_5				0x0150
+#define GPIO_OFFSET_DOUT_5_SET			0x0154
+#define GPIO_OFFSET_DOUT_5_CLR			0x0158
+#define GPIO_OFFSET_DIR_0				0x0000
+#define GPIO_OFFSET_DIR_0_SET			0x0004
+#define GPIO_OFFSET_DIR_0_CLR			0x0008
+#define GPIO_OFFSET_DIR_1				0x0010
+#define GPIO_OFFSET_DIR_1_SET			0x0014
+#define GPIO_OFFSET_DIR_1_CLR			0x0018
+#define GPIO_OFFSET_DIR_2				0x0020
+#define GPIO_OFFSET_DIR_2_SET			0x0024
+#define GPIO_OFFSET_DIR_2_CLR			0x0028
+#define GPIO_OFFSET_DIR_3				0x0030
+#define GPIO_OFFSET_DIR_3_SET			0x0034
+#define GPIO_OFFSET_DIR_3_CLR			0x0038
+#define GPIO_OFFSET_DIR_4				0x0040
+#define GPIO_OFFSET_DIR_4_SET			0x0044
+#define GPIO_OFFSET_DIR_4_CLR			0x0048
+#define GPIO_OFFSET_DIR_5				0x0050
+#define GPIO_OFFSET_DIR_5_SET			0x0054
+#define GPIO_OFFSET_DIR_5_CLR			0x0058
+
+// #define GPIO_OFFSET_PULL_EN_0			0x0860
+// #define GPIO_OFFSET_PULL_EN_0_SET		0x0864
+// #define GPIO_OFFSET_PULL_EN_0_CLR		0x0868
+// #define GPIO_OFFSET_PULL_EN_1			0x0870
+// #define GPIO_OFFSET_PULL_EN_1_SET		0x0874
+// #define GPIO_OFFSET_PULL_EN_1_CLR		0x0878
+// #define GPIO_OFFSET_PULL_EN_2			0x0880
+// #define GPIO_OFFSET_PULL_EN_2_SET		0x0884
+// #define GPIO_OFFSET_PULL_EN_2_CLR		0x0888
+// #define GPIO_OFFSET_PULL_EN_3			0x0890
+// #define GPIO_OFFSET_PULL_EN_3_SET		0x0894
+// #define GPIO_OFFSET_PULL_EN_3_CLR		0x0898
+// #define GPIO_OFFSET_PULL_EN_4			0x08a0
+// #define GPIO_OFFSET_PULL_EN_4_SET		0x08a4
+// #define GPIO_OFFSET_PULL_EN_4_CLR		0x08a8
+// #define GPIO_OFFSET_PULL_SEL_0			0x0900
+// #define GPIO_OFFSET_PULL_SEL_0_SET		0x0904
+// #define GPIO_OFFSET_PULL_SEL_0_CLR		0x0908
+// #define GPIO_OFFSET_PULL_SEL_1			0x0910
+// #define GPIO_OFFSET_PULL_SEL_1_SET		0x0914
+// #define GPIO_OFFSET_PULL_SEL_1_CLR		0x0918
+// #define GPIO_OFFSET_PULL_SEL_2			0x0920
+// #define GPIO_OFFSET_PULL_SEL_2_SET		0x0924
+// #define GPIO_OFFSET_PULL_SEL_2_CLR		0x0928
+// #define GPIO_OFFSET_PULL_SEL_3			0x0930
+// #define GPIO_OFFSET_PULL_SEL_3_SET		0x0934
+// #define GPIO_OFFSET_PULL_SEL_3_CLR		0x0938
+// #define GPIO_OFFSET_PULL_SEL_4			0x0940
+// #define GPIO_OFFSET_PULL_SEL_4_SET		0x0944
+// #define GPIO_OFFSET_PULL_SEL_4_CLR		0x0948
 
 static const uint32_t pin_to_din_offset_map[] = {
 	/*   0 -  31 */ GPIO_OFFSET_DIN_0,
@@ -86,6 +94,8 @@ static const uint32_t pin_to_din_offset_map[] = {
 	/*  64 -  95 */ GPIO_OFFSET_DIN_2,
 	/*  96 - 127 */ GPIO_OFFSET_DIN_3,
 	/* 128 - 159 */ GPIO_OFFSET_DIN_4,
+	/* 160 - 176 */ GPIO_OFFSET_DIN_5,
+	/* 177 - 191 Reserved */
 };
 
 static const uint32_t pin_to_dout_set_offset_map[] = {
@@ -94,6 +104,7 @@ static const uint32_t pin_to_dout_set_offset_map[] = {
 	/*  64 -  95 */ GPIO_OFFSET_DOUT_2_SET,
 	/*  96 - 127 */ GPIO_OFFSET_DOUT_3_SET,
 	/* 128 - 159 */ GPIO_OFFSET_DOUT_4_SET,
+	/* 160 - 176 */ GPIO_OFFSET_DOUT_5_SET,
 };
 
 static const uint32_t pin_to_dout_clr_offset_map[] = {
@@ -102,6 +113,7 @@ static const uint32_t pin_to_dout_clr_offset_map[] = {
 	/*  64 -  95 */ GPIO_OFFSET_DOUT_2_CLR,
 	/*  96 - 127 */ GPIO_OFFSET_DOUT_3_CLR,
 	/* 128 - 159 */ GPIO_OFFSET_DOUT_4_CLR,
+	/* 160 - 176 */ GPIO_OFFSET_DOUT_5_CLR,
 };
 
 static const uint32_t pin_to_dir_set_offset_map[] = {
@@ -110,6 +122,7 @@ static const uint32_t pin_to_dir_set_offset_map[] = {
 	/*  64 -  95 */ GPIO_OFFSET_DIR_2_SET,
 	/*  96 - 127 */ GPIO_OFFSET_DIR_3_SET,
 	/* 128 - 159 */ GPIO_OFFSET_DIR_4_SET,
+	/* 160 - 176 */ GPIO_OFFSET_DIR_5_SET,
 };
 
 static const uint32_t pin_to_dir_clr_offset_map[] = {
@@ -118,42 +131,44 @@ static const uint32_t pin_to_dir_clr_offset_map[] = {
 	/*  64 -  95 */ GPIO_OFFSET_DIR_2_CLR,
 	/*  96 - 127 */ GPIO_OFFSET_DIR_3_CLR,
 	/* 128 - 159 */ GPIO_OFFSET_DIR_4_CLR,
+	/* 160 - 176 */ GPIO_OFFSET_DIR_5_CLR,
 };
 
-static const uint32_t pin_to_pull_en_set_offset_map[] = {
-	/*   0 -  31 */ GPIO_OFFSET_PULL_EN_0_SET,
-	/*  32 -  63 */ GPIO_OFFSET_PULL_EN_1_SET,
-	/*  64 -  95 */ GPIO_OFFSET_PULL_EN_2_SET,
-	/*  96 - 127 */ GPIO_OFFSET_PULL_EN_3_SET,
-	/* 128 - 159 */ GPIO_OFFSET_PULL_EN_4_SET,
-};
+// static const uint32_t pin_to_pull_en_set_offset_map[] = {
+// 	/*   0 -  31 */ GPIO_OFFSET_PULL_EN_0_SET,
+// 	/*  32 -  63 */ GPIO_OFFSET_PULL_EN_1_SET,
+// 	/*  64 -  95 */ GPIO_OFFSET_PULL_EN_2_SET,
+// 	/*  96 - 127 */ GPIO_OFFSET_PULL_EN_3_SET,
+// 	/* 128 - 159 */ GPIO_OFFSET_PULL_EN_4_SET,
+// };
 
-static const uint32_t pin_to_pull_en_clr_offset_map[] = {
-	/*   0 -  31 */ GPIO_OFFSET_PULL_EN_0_CLR,
-	/*  32 -  63 */ GPIO_OFFSET_PULL_EN_1_CLR,
-	/*  64 -  95 */ GPIO_OFFSET_PULL_EN_2_CLR,
-	/*  96 - 127 */ GPIO_OFFSET_PULL_EN_3_CLR,
-	/* 128 - 159 */ GPIO_OFFSET_PULL_EN_4_CLR,
-};
+// static const uint32_t pin_to_pull_en_clr_offset_map[] = {
+// 	/*   0 -  31 */ GPIO_OFFSET_PULL_EN_0_CLR,
+// 	/*  32 -  63 */ GPIO_OFFSET_PULL_EN_1_CLR,
+// 	/*  64 -  95 */ GPIO_OFFSET_PULL_EN_2_CLR,
+// 	/*  96 - 127 */ GPIO_OFFSET_PULL_EN_3_CLR,
+// 	/* 128 - 159 */ GPIO_OFFSET_PULL_EN_4_CLR,
+// };
 
-static const uint32_t pin_to_pull_sel_set_offset_map[] = {
-	/*   0 -  31 */ GPIO_OFFSET_PULL_SEL_0_SET,
-	/*  32 -  63 */ GPIO_OFFSET_PULL_SEL_1_SET,
-	/*  64 -  95 */ GPIO_OFFSET_PULL_SEL_2_SET,
-	/*  96 - 127 */ GPIO_OFFSET_PULL_SEL_3_SET,
-	/* 128 - 159 */ GPIO_OFFSET_PULL_SEL_4_SET,
-};
+// static const uint32_t pin_to_pull_sel_set_offset_map[] = {
+// 	/*   0 -  31 */ GPIO_OFFSET_PULL_SEL_0_SET,
+// 	/*  32 -  63 */ GPIO_OFFSET_PULL_SEL_1_SET,
+// 	/*  64 -  95 */ GPIO_OFFSET_PULL_SEL_2_SET,
+// 	/*  96 - 127 */ GPIO_OFFSET_PULL_SEL_3_SET,
+// 	/* 128 - 159 */ GPIO_OFFSET_PULL_SEL_4_SET,
+// };
 
-static const uint32_t pin_to_pull_sel_clr_offset_map[] = {
-	/*   0 -  31 */ GPIO_OFFSET_PULL_SEL_0_CLR,
-	/*  32 -  63 */ GPIO_OFFSET_PULL_SEL_1_CLR,
-	/*  64 -  95 */ GPIO_OFFSET_PULL_SEL_2_CLR,
-	/*  96 - 127 */ GPIO_OFFSET_PULL_SEL_3_CLR,
-	/* 128 - 159 */ GPIO_OFFSET_PULL_SEL_4_CLR,
-};
+// static const uint32_t pin_to_pull_sel_clr_offset_map[] = {
+// 	/*   0 -  31 */ GPIO_OFFSET_PULL_SEL_0_CLR,
+// 	/*  32 -  63 */ GPIO_OFFSET_PULL_SEL_1_CLR,
+// 	/*  64 -  95 */ GPIO_OFFSET_PULL_SEL_2_CLR,
+// 	/*  96 - 127 */ GPIO_OFFSET_PULL_SEL_3_CLR,
+// 	/* 128 - 159 */ GPIO_OFFSET_PULL_SEL_4_CLR,
+// };
 
 #define DEV_CFG(dev)  ((const gpio_mtk_config_t *const)((dev)->config))
 #define DEV_DATA(dev) ((gpio_mtk_data_t *const)((dev)->data))
+
 
 typedef struct {
 	struct gpio_driver_config common;
@@ -208,20 +223,20 @@ static int gpio_mtk_pin_configure(const struct device *dev, gpio_pin_t pin, gpio
 	}
 
 	/* Set pull up / down */
-	if ((flags & GPIO_PULL_UP) != 0) {
-		sys_write32((1 << shift), DEVICE_MMIO_NAMED_GET(dev, reg_base) +
-						  pin_to_pull_sel_set_offset_map[gpio_config->idx]);
-		sys_write32((1 << shift), DEVICE_MMIO_NAMED_GET(dev, reg_base) +
-						  pin_to_pull_en_set_offset_map[gpio_config->idx]);
-	} else if ((flags & GPIO_PULL_DOWN) != 0) {
-		sys_write32((1 << shift), DEVICE_MMIO_NAMED_GET(dev, reg_base) +
-						  pin_to_pull_sel_clr_offset_map[gpio_config->idx]);
-		sys_write32((1 << shift), DEVICE_MMIO_NAMED_GET(dev, reg_base) +
-						  pin_to_pull_en_set_offset_map[gpio_config->idx]);
-	} else {
-		sys_write32((1 << shift), DEVICE_MMIO_NAMED_GET(dev, reg_base) +
-						  pin_to_pull_en_clr_offset_map[gpio_config->idx]);
-	}
+	// if ((flags & GPIO_PULL_UP) != 0) {
+	// 	sys_write32((1 << shift), DEVICE_MMIO_NAMED_GET(dev, reg_base) +
+	// 					  pin_to_pull_sel_set_offset_map[gpio_config->idx]);
+	// 	sys_write32((1 << shift), DEVICE_MMIO_NAMED_GET(dev, reg_base) +
+	// 					  pin_to_pull_en_set_offset_map[gpio_config->idx]);
+	// } else if ((flags & GPIO_PULL_DOWN) != 0) {
+	// 	sys_write32((1 << shift), DEVICE_MMIO_NAMED_GET(dev, reg_base) +
+	// 					  pin_to_pull_sel_clr_offset_map[gpio_config->idx]);
+	// 	sys_write32((1 << shift), DEVICE_MMIO_NAMED_GET(dev, reg_base) +
+	// 					  pin_to_pull_en_set_offset_map[gpio_config->idx]);
+	// } else {
+	// 	sys_write32((1 << shift), DEVICE_MMIO_NAMED_GET(dev, reg_base) +
+	// 					  pin_to_pull_en_clr_offset_map[gpio_config->idx]);
+	// }
 
 	return 0;
 }
@@ -230,9 +245,9 @@ static int gpio_mtk_port_get_raw(const struct device *dev, gpio_port_value_t *va
 {
 	const gpio_mtk_config_t *gpio_config = dev->config;
 
-	(*value) = sys_read32(DEVICE_MMIO_NAMED_GET(dev, reg_base) +
-			      pin_to_din_offset_map[gpio_config->idx]) &
-		   gpio_config->gpio_pin_mask;
+	*value = sys_read32(DEVICE_MMIO_NAMED_GET(dev, reg_base) +
+			    pin_to_din_offset_map[gpio_config->idx]) &
+		 gpio_config->gpio_pin_mask;
 
 	return 0;
 }
@@ -287,7 +302,7 @@ static int gpio_mtk_port_toggle_bits(const struct device *dev, gpio_port_pins_t 
 static int gpio_mtk_pin_interrupt_configure(const struct device *dev, gpio_pin_t pin,
 					    enum gpio_int_mode mode, enum gpio_int_trig trig)
 {
-	const gpio_mtk_config_t *gpio_config = dev->config;
+	// const gpio_mtk_config_t* gpio_config = dev->config;
 
 	return 0;
 }
@@ -306,7 +321,7 @@ static int gpio_mtk_manage_callback(const struct device *dev, struct gpio_callba
 static void eint_handler(const struct device *dev, uint8_t line, void *arg)
 {
 	gpio_mtk_data_t *gpio_data = dev->data;
-	gpio_mtk_config_t *gpio_config = dev->config;
+	const gpio_mtk_config_t *gpio_config = dev->config;
 
 	if (line >= (gpio_config->idx * 32)) {
 		line -= (gpio_config->idx * 32);
@@ -319,7 +334,7 @@ static int gpio_mtk_init(const struct device *dev)
 {
 	int ret;
 	gpio_mtk_data_t *gpio_data = dev->data;
-	gpio_mtk_config_t *gpio_config = dev->config;
+	const gpio_mtk_config_t *gpio_config = dev->config;
 
 	DEVICE_MMIO_NAMED_MAP(dev, reg_base, K_MEM_CACHE_NONE);
 

@@ -154,104 +154,88 @@
 #define PINCTRL_OFFSET_MISC_DUMMY			0x09d0
 #define PINCTRL_OFFSET_BIAS_CFG             0x09f0
 
+typedef struct {
+	uint16_t max_pin;
+	uint16_t max_func;
+} pinctrl_mtk_config_t;
 
-typedef struct
-{
-    uint16_t  max_pin;
-    uint16_t  max_func;
-}   pinctrl_mtk_config_t;
-
-
-static const pinctrl_mtk_config_t  pinctrl_mtk_config =
-{
-    .max_pin  = 145,
-    .max_func = 8,
+static const pinctrl_mtk_config_t pinctrl_mtk_config = {
+	.max_pin = 145,
+	.max_func = 8,
 };
 
-static const uint32_t pin_to_mode_offset_map [] =
-{
-    /*   0 -   9 */ PINCTRL_OFFSET_MODE_0,
-    /*  10 -  19 */ PINCTRL_OFFSET_MODE_1,
-    /*  20 -  29 */ PINCTRL_OFFSET_MODE_2,
-    /*  30 -  39 */ PINCTRL_OFFSET_MODE_3,
-    /*  40 -  49 */ PINCTRL_OFFSET_MODE_4,
-    /*  50 -  59 */ PINCTRL_OFFSET_MODE_5,
-    /*  60 -  69 */ PINCTRL_OFFSET_MODE_6,
-    /*  70 -  79 */ PINCTRL_OFFSET_MODE_7,
-    /*  80 -  89 */ PINCTRL_OFFSET_MODE_8,
-    /*  90 -  99 */ PINCTRL_OFFSET_MODE_9,
-    /* 100 - 109 */ PINCTRL_OFFSET_MODE_A,
-    /* 110 - 119 */ PINCTRL_OFFSET_MODE_B,
-    /* 120 - 129 */ PINCTRL_OFFSET_MODE_C,
-    /* 130 - 139 */ PINCTRL_OFFSET_MODE_D,
-    /* 140 - 149 */ PINCTRL_OFFSET_MODE_E
+static const uint32_t pin_to_mode_offset_map[] = {
+	/*   0 -   9 */ PINCTRL_OFFSET_MODE_0,
+	/*  10 -  19 */ PINCTRL_OFFSET_MODE_1,
+	/*  20 -  29 */ PINCTRL_OFFSET_MODE_2,
+	/*  30 -  39 */ PINCTRL_OFFSET_MODE_3,
+	/*  40 -  49 */ PINCTRL_OFFSET_MODE_4,
+	/*  50 -  59 */ PINCTRL_OFFSET_MODE_5,
+	/*  60 -  69 */ PINCTRL_OFFSET_MODE_6,
+	/*  70 -  79 */ PINCTRL_OFFSET_MODE_7,
+	/*  80 -  89 */ PINCTRL_OFFSET_MODE_8,
+	/*  90 -  99 */ PINCTRL_OFFSET_MODE_9,
+	/* 100 - 109 */ PINCTRL_OFFSET_MODE_A,
+	/* 110 - 119 */ PINCTRL_OFFSET_MODE_B,
+	/* 120 - 129 */ PINCTRL_OFFSET_MODE_C,
+	/* 130 - 139 */ PINCTRL_OFFSET_MODE_D,
+	/* 140 - 149 */ PINCTRL_OFFSET_MODE_E,
 };
 
+static uint32_t to_mode_offset(uint16_t pin);
+static uint32_t to_mode_shift(uint16_t pin);
+static uint32_t to_mode_mask(uint16_t pin);
 
-static uint32_t to_mode_offset (uint16_t  pin);
-static uint32_t to_mode_shift (uint16_t  pin);
-static uint32_t to_mode_mask (uint16_t  pin);
-
-
-static uint32_t to_mode_offset (uint16_t  pin)
+static uint32_t to_mode_offset(uint16_t pin)
 {
-    /* Each 32 bit MODE register controls 10 pins. */
-    return (pin_to_mode_offset_map [pin / 10]);
+	/* Each 32 bit MODE register controls 10 pins. */
+	return (pin_to_mode_offset_map[pin / 10]);
 }
 
-static uint32_t to_mode_shift (uint16_t  pin)
+static uint32_t to_mode_shift(uint16_t pin)
 {
-    return ((pin % 10) * 3);
+	return ((pin % 10) * 3);
 }
 
-static uint32_t to_mode_mask (uint16_t  pin)
+static uint32_t to_mode_mask(uint16_t pin)
 {
-    return (0x00000003 << to_mode_shift (pin));
+	return (0x00000003 << to_mode_shift(pin));
 }
 
-static int pinctrl_set_func (uint16_t  pin,
-                             uint16_t  func)
+static int pinctrl_set_func(uint16_t pin, uint16_t func)
 {
-    uint32_t val;
-    uint32_t offset;
+	uint32_t val;
+	uint32_t offset;
 
-
-    if ((pin  >= pinctrl_mtk_config.max_pin)   ||
-        (func >= pinctrl_mtk_config.max_func))
-    {
-        return (-EINVAL);
-    }
-
-    offset = to_mode_offset (pin);
-
-    /* Read the existing function value and replace */
-    /* with the new function value.                 */
-    val = sys_read32 (PINCTRL_BASE_ADDR + offset);
-    val = (val & (~(to_mode_mask (pin)))) | (((uint32_t) func) << to_mode_shift (pin));
-
-	sys_write32 (val, (PINCTRL_BASE_ADDR + offset));
-
-    return (0);
-}
-
-int pinctrl_configure_pins (const pinctrl_soc_pin_t*  pins,
-                            uint8_t                   pin_cnt,
-                            uintptr_t                 reg)
-{
-    uint8_t idx;
-
-
-	for (idx = 0; idx < pin_cnt; idx++)
-    {
-		int ret;
-        
-
-        ret = pinctrl_set_func (pins [idx].pin, pins [idx].func);
-        if (ret != 0)
-        {
-            return (ret);
-        }
+	if ((pin >= pinctrl_mtk_config.max_pin) || (func >= pinctrl_mtk_config.max_func)) {
+		return -EINVAL;
 	}
 
-	return (0);
+	offset = to_mode_offset(pin);
+
+	/* Read the existing function value and replace */
+	/* with the new function value.                 */
+	val = sys_read32(PINCTRL_BASE_ADDR + offset);
+	val &= ~(to_mode_mask(pin));
+	val |= ((uint32_t)func) << to_mode_shift(pin);
+
+	sys_write32(val, (PINCTRL_BASE_ADDR + offset));
+
+	return 0;
+}
+
+int pinctrl_configure_pins(const pinctrl_soc_pin_t *pins, uint8_t pin_cnt, uintptr_t reg)
+{
+	uint8_t idx;
+
+	for (idx = 0; idx < pin_cnt; idx++) {
+		int ret;
+
+		ret = pinctrl_set_func(pins[idx].pin, pins[idx].func);
+		if (ret != 0) {
+			return ret;
+		}
+	}
+
+	return 0;
 }

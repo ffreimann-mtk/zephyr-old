@@ -1,0 +1,21 @@
+# Copyright 2025 MediaTek
+# SPDX-License-Identifier: Apache-2.0
+
+description: MT8370 UART
+
+compatible: "mediatek,mt8370-uart"
+
+include: [uart-controller.yaml, pinctrl-device.yaml]
+
+properties:
+  reg:
+    required: true
+
+  interrupts:
+    required: false
+
+  pinctrl-0:
+    required: true
+
+  pinctrl-names:
+    required: true
