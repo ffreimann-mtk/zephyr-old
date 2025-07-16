@@ -23,7 +23,7 @@ typedef struct pinctrl_soc {
 #define Z_PINCTRL_STATE_PIN_INIT(node_id, prop, idx)					\
 	{																	\
 		.pin = MTK_GET_PIN_NO(DT_PROP_BY_IDX(node_id, prop, idx)),		\
-		.func = MTK_GET_PIN_FUNC(DT_PROP_BY_IDX(node_id, prop, idx))
+		.func = MTK_GET_PIN_FUNC(DT_PROP_BY_IDX(node_id, prop, idx))    \
 	},
 
 #define Z_PINCTRL_STATE_PINS_INIT(node_id, prop)										\

@@ -391,7 +391,7 @@ static DEVICE_API(uart, uart_mtk_driver_api) = {
 		.baud_rate = DT_INST_PROP(n, current_speed),                                         \
 		.clocks = DT_INST_PROP(n, clock_frequency),                                          \
 		IF_ENABLED (CONFIG_PINCTRL, (.pinctrl_config = PINCTRL_DT_INST_DEV_CONFIG_GET (n),)) \
-		IRQ_FUNC_INIT
+		IRQ_FUNC_INIT                                                                        \
 	}
 
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
