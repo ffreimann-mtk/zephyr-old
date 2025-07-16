@@ -1,0 +1,16 @@
+# Copyright 2025 MediaTek
+# SPDX-License-Identifier: Apache-2.0
+
+config MTK_EINT_MT8365
+	bool "MediaTek MT8365 EINT driver"
+	default y
+	depends on SOC_FAMILY_MTK_GENIO
+	help
+	  Enable the MediaTek MT8365 EINT driver.
+
+config MTK_EINT_MT8370
+	bool "MediaTek MT8370 EINT driver"
+	default n
+	depends on SOC_FAMILY_MTK_GENIO
+	help
+	  Enable the MediaTek MT8370 EINT driver.
