@@ -1,0 +1,73 @@
+/*
+ * Copyright 2025 MediaTek
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+#include <mem.h>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <mediatek/mt8365.dtsi>
+#include "i350_pumpkin-pinctrl.dtsi"
+
+/ {
+	model = "MediaTek i350 Pumpkin (4*Cortex-A53)";
+	compatible = "mediatek,mt8365-pumpkin";
+
+	aliases {
+		trigger = &trigger_gpio;
+		response = &response_gpio;
+	};
+
+	chosen {
+		zephyr,console = &uart1;
+		zephyr,sram = &dram;
+	};
+
+	trigger {
+		compatible = "gpio-keys";
+
+		trigger_gpio: trigger-gpio {
+			gpios = <&gpio96_127 10 GPIO_ACTIVE_HIGH>;  /* GPIO 106 */
+			label = "Event Trigger";
+		};
+    };
+
+	response {
+		compatible = "gpio-leds";
+
+		response_gpio: response-pgio {
+			gpios = <&gpio96_127 11 GPIO_ACTIVE_HIGH>;  /* GPIO 107 */
+			label = "Event Response";
+		};
+	};
+
+	cpus {
+		cpu@0 {
+			status = "disabled";
+		};
+		cpu@1 {
+			status = "disabled";
+		};
+		cpu@2 {
+			status = "disabled";
+		};
+	};
+
+	dram: memory@8000 {
+		reg = <0x00008000 DT_SIZE_M(2)>;
+	};
+};
+
+&gpio96_127 {
+   	status = "okay";
+};
+
+&uart1 {
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-names = "default";
+	current-speed = <115200>;
+    clock-frequency = <27>;
+	status = "okay";
+};

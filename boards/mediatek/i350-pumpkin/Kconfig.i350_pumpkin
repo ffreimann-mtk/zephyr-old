@@ -1,0 +1,6 @@
+# Copyright 2025 MediaTek
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_I350_PUMPKIN
+	select SOC_MT8365_A53 if BOARD_I350_PUMPKIN_MT8365_A53
+

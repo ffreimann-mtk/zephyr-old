@@ -1,0 +1,164 @@
+/*
+ * Copyright 2025 MediaTek
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+
+#include <arm64/armv8-a.dtsi>
+#include <zephyr/dt-bindings/interrupt-controller/arm-gic.h>
+#include <zephyr/dt-bindings/interrupt-controller/mtk-irq.h>
+
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0>;
+		};
+
+		cpu@1 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <1>;
+		};
+
+		cpu@2 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <2>;
+		};
+
+		cpu@3 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <3>;
+		};
+
+	};
+
+	arch_timer: timer {
+		compatible = "arm,armv8-timer";
+		interrupt-parent = <&gic>;
+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW IRQ_DEFAULT_PRIORITY>,
+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW IRQ_DEFAULT_PRIORITY>;
+	};
+
+	gic: interrupt-controller@c000000 {
+		compatible = "arm,gic-v3", "arm,gic";
+		#interrupt-cells = <4>;
+		interrupt-controller;
+		reg = <0xc000000 0x80000>,
+		      <0xc080000 0x80000>;
+		status = "okay";
+	};
+
+	pinctrl: pinctrl@10005000 {
+		compatible = "mediatek,mt8365-pinctrl";
+		reg = <0x10005000 0x1000>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+	    status = "okay";
+    };
+
+	eint: eint@1000b000 {
+		compatible = "mediatek,mt8365-eint";
+		reg = <0x1000b000 0x1000>;
+		interrupt-parent = <&gic>;
+        interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH IRQ_DEFAULT_PRIORITY>;
+        num-lines = <146>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+	    status = "okay";
+    };
+
+    gpio: gpio@10005000 {
+	   	compatible = "simple-bus";
+	    reg = <0x10005000 0x1000>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+    	gpio0_31: gpio@0 {
+	   		compatible = "mediatek,mt8365-gpio";
+	    	reg = <0>;
+    		interrupt-parent = <&eint>;
+		    gpio-controller;
+    		#gpio-cells = <2>;
+            ngpios = <32>;
+	    	status = "disabled";
+        };
+
+    	gpio32_63: gpio@1 {
+	   		compatible = "mediatek,mt8365-gpio";
+	    	reg = <1>;
+    		interrupt-parent = <&eint>;
+		    gpio-controller;
+    		#gpio-cells = <2>;
+            ngpios = <32>;
+	    	status = "disabled";
+        };
+
+   		gpio64_95: gpio@2 {
+    		compatible = "mediatek,mt8365-gpio";
+	    	reg = <2>;
+    		interrupt-parent = <&eint>;
+		    gpio-controller;
+   			#gpio-cells = <2>;
+            ngpios = <32>;
+        	status = "disabled";
+        };
+
+   		gpio96_127: gpio@3 {
+    		compatible = "mediatek,mt8365-gpio";
+	    	reg = <3>;
+    		interrupt-parent = <&eint>;
+		    gpio-controller;
+   			#gpio-cells = <2>;
+            ngpios = <32>;
+	    	status = "disabled";
+   	    };
+
+    	gpio128_144: gpio@4 {
+	    	compatible = "mediatek,mt8365-gpio";
+		    reg = <4>;
+    		interrupt-parent = <&eint>;
+   			gpio-controller;
+    		#gpio-cells = <2>;
+            ngpios = <17>;
+		    status = "disabled";
+        };
+    };
+
+	uart0: uart@11002000 {
+		compatible = "mediatek,mt8365-uart";
+		reg = <0x11002000 0x1000>;
+		interrupt-parent = <&gic>;
+		interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_LOW IRQ_DEFAULT_PRIORITY>;
+		status = "disabled";
+	};
+
+	uart1: uart@11003000 {
+		compatible = "mediatek,mt8365-uart";
+		reg = <0x11003000 0x1000>;
+		interrupt-parent = <&gic>;
+		interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_LOW IRQ_DEFAULT_PRIORITY>;
+		status = "disabled";
+	};
+
+	uart2: uart@11004000 {
+		compatible = "mediatek,mt8365-uart";
+		reg = <0x11004000 0x1000>;
+		interrupt-parent = <&gic>;
+		interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_LOW IRQ_DEFAULT_PRIORITY>;
+		status = "disabled";
+	};
+};
