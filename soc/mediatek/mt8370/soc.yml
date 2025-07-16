@@ -6,4 +6,3 @@ family:
     - name: mt8370
       cpuclusters:
       - name: a55
-

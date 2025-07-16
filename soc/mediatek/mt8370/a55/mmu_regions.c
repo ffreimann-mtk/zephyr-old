@@ -24,6 +24,11 @@ static const struct arm_mmu_region mmu_regions [] =
         DT_REG_ADDR_BY_IDX (DT_NODELABEL (pinctrl), 0),
         DT_REG_SIZE_BY_IDX (DT_NODELABEL (pinctrl), 0),
         (MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS)),
+
+    MMU_REGION_FLAT_ENTRY("EINT",
+        DT_REG_ADDR_BY_IDX (DT_NODELABEL (eint), 0),
+        DT_REG_SIZE_BY_IDX (DT_NODELABEL (eint), 0),
+        (MT_DEVICE_nGnRnE | MT_P_RW_U_NA | MT_NS)),
 };
 
 const struct arm_mmu_config mmu_config = {

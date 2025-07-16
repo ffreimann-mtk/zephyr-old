@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#define DT_DRV_COMPAT mediatek_mt8365_uart
+#define DT_DRV_COMPAT mediatek_mt8370_uart
 
 
 #include <zephyr/drivers/pinctrl.h>
@@ -26,7 +26,6 @@
 #define UART_OFFSET_AUTOBAUD_EN    0x0020   /* (RW) Autobaud detect enable */
 #define UART_OFFSET_HIGH_SPEED     0x0024   /* (RW) Highspeed */
 #define UART_OFFSET_SAMPLE_COUNT   0x0028   /* (RW) Sample count */
-#define UART_OFFSET_SAMPLE_POINT   0x002c   /* (RW) Sample point */
 #define UART_OFFSET_SAMPLE_POINT   0x002c   /* (RW) Sample point */
 #define UART_OFFSET_AUTOBAUD       0x0030   /* (RO) Autobaud monitor */
 #define UART_OFFSET_DLL            0x0090   /* (RW) Divisor latch (LSB) */
@@ -62,14 +61,11 @@
 
 typedef struct {
 	DEVICE_MMIO_ROM; /* Must be first */
-
 	uint32_t baud_rate;
 	uint32_t clocks;
-
 #ifdef CONFIG_PINCTRL
 	const struct pinctrl_dev_config *pinctrl_config;
 #endif
-
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
 	void (*irq_config_func)(const struct device *dev);
 #endif
@@ -77,12 +73,9 @@ typedef struct {
 
 typedef struct {
 	DEVICE_MMIO_RAM; /* Must be first */
-
 	struct k_spinlock lock;
-
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
 	uart_irq_callback_user_data_t callback;
-
 	void *cb_data;
 #endif
 } uart_mtk_data_t;

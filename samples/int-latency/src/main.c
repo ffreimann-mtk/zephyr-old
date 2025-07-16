@@ -9,140 +9,110 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/uart.h>
 
+#define UART_RX_DATA_SIZE 256
 
-#define UART_RX_DATA_SIZE  256
+static const struct device *const uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+static const struct gpio_dt_spec trigger = GPIO_DT_SPEC_GET(DT_ALIAS(trigger), gpios);
+static const struct gpio_dt_spec response = GPIO_DT_SPEC_GET(DT_ALIAS(response), gpios);
 
-
-static const struct device* const  uart_dev = DEVICE_DT_GET (DT_CHOSEN (zephyr_console));
-
-static const struct gpio_dt_spec trigger  = GPIO_DT_SPEC_GET (DT_ALIAS (trigger),  gpios);
-static const struct gpio_dt_spec response = GPIO_DT_SPEC_GET (DT_ALIAS (response), gpios);
-
-
-static volatile uint64_t wait_cnt;
-
-static struct gpio_callback  trigger_cb_data;
-
-static bool  response_is_set = false;
+static struct gpio_callback trigger_cb_data;
 
 static uint32_t evt_cnt = 0;
 
 static uint32_t rx_Data_wr_idx = 0;
-static uint32_t rx_Data_rd_idx = 0;
+// static uint32_t rx_Data_rd_idx = 0;
 
-static uint8_t  uart_rx_data [UART_RX_DATA_SIZE];
+static uint8_t uart_rx_data[UART_RX_DATA_SIZE];
 
-static int response_wait_cnt;
-
-
-static void wait_loop (void)
+static void wait_loop(void)
 {
-    wait_cnt = 0;
+	volatile uint64_t wait_cnt = 0;
 
-    while (wait_cnt < 50000)
-    {
-        wait_cnt++;
-    }
+	while (wait_cnt++ < 50000)
+		;
 }
 
-static void uart_fifo_callback (const struct device*  dev,
-                                void*                 user_data)
+static void uart_fifo_callback(const struct device *dev, void *user_data)
 {
-    while (uart_irq_rx_ready (dev))
-    {
-        rx_Data_wr_idx += uart_fifo_read (dev, &(uart_rx_data [rx_Data_wr_idx]), (UART_RX_DATA_SIZE - rx_Data_wr_idx));
+	while (uart_irq_rx_ready(dev)) {
+		rx_Data_wr_idx += uart_fifo_read(dev, &(uart_rx_data[rx_Data_wr_idx]),
+						 (UART_RX_DATA_SIZE - rx_Data_wr_idx));
 
-        if (rx_Data_wr_idx >= UART_RX_DATA_SIZE)
-        {
-            rx_Data_wr_idx = 0;
-        }
-    }
+		if (rx_Data_wr_idx >= UART_RX_DATA_SIZE) {
+			rx_Data_wr_idx = 0;
+		}
+	}
 }
 
-void trigger_evt (const struct device*   dev,
-                  struct gpio_callback*  cb,
-		          uint32_t               pins)
+void trigger_evt(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-    gpio_pin_set_dt (&response, 1);
+	static uint32_t resp = 0;
 
-    response_wait_cnt = 0;
-    response_is_set = true;
-
-    evt_cnt++;
+	gpio_pin_set_dt(&response, (resp++) & 1);
+	evt_cnt++;
 }
 
 int main(void)
 {
-    int ret;
-    int print_wait_cnt;
+	int ret;
+	int print_wait_cnt;
 
+	printf("Hello from Interrupt Latency ... %s\n", CONFIG_BOARD_TARGET);
 
-	printf ("Hello from Interrupt Latency ... %s\n", CONFIG_BOARD_TARGET);
+	if (!(gpio_is_ready_dt(&trigger)))
+		return (0);
 
-    if (! (gpio_is_ready_dt (&trigger)))
-    {
-        return (0);
-    }
-
-	ret = gpio_pin_configure_dt (&trigger, GPIO_INPUT);
-	if (ret < 0)
-    {
+	ret = gpio_pin_configure_dt(&trigger, GPIO_INPUT);
+	if (ret < 0) {
 		return 0;
 	}
 
-    printf ("  Initialized the trigger GPIO port ....\n");
+	printf("  Initialized the trigger GPIO port ....\n");
 
-    ret = gpio_pin_interrupt_configure_dt (&trigger, GPIO_INT_EDGE_TO_ACTIVE);
-    if (ret < 0)
-    {
-        return (0);
-    }    
-
-	gpio_init_callback (&trigger_cb_data, trigger_evt, BIT (trigger.pin));
-	gpio_add_callback (trigger.port, &trigger_cb_data);
-
-    printf ("  Initialized the trigger interrupt ....\n");
-
-    if (! (gpio_is_ready_dt (&response)))
-    {
-        return (0);
-    }
-
-	ret = gpio_pin_configure_dt (&response, GPIO_OUTPUT_INACTIVE);
+	ret = gpio_pin_interrupt_configure_dt(&trigger, GPIO_INT_EDGE_TO_INACTIVE);
 	if (ret < 0)
-    {
 		return 0;
-	}
 
-    printf ("  Initialized the response GPIO port ....\n");
+	gpio_init_callback(&trigger_cb_data, trigger_evt, BIT(trigger.pin));
+	gpio_add_callback(trigger.port, &trigger_cb_data);
 
-	uart_irq_callback_set (uart_dev, uart_fifo_callback);
-	uart_irq_rx_enable (uart_dev);
+	printf("  Initialized the trigger interrupt ....\n");
 
-    print_wait_cnt = 0;
-    response_wait_cnt = 0;
+	if (!(gpio_is_ready_dt(&response)))
+		return 0;
 
-	while (1)
-    {
-        print_wait_cnt++;
-        if (print_wait_cnt >= 10000)
-        {
-        	printf("  Interrupt count: %d \\ %d\n", evt_cnt, rx_Data_wr_idx);
-            print_wait_cnt = 0;
-        }
+	ret = gpio_pin_configure_dt(&response, GPIO_OUTPUT_INACTIVE);
+	if (ret < 0)
+		return 0;
 
-        if (response_is_set)
-        {
-            response_wait_cnt++;
-            if (response_wait_cnt >= 2)
-            {
-                gpio_pin_set_dt (&response, 0);
+	printf("  Initialized the response GPIO port ....\n");
 
-                response_is_set = false;
-                response_wait_cnt = 0;
-            }
-        }
-        wait_loop ();
+	uart_irq_callback_set(uart_dev, uart_fifo_callback);
+	uart_irq_rx_enable(uart_dev);
+
+	print_wait_cnt = 0;
+
+	*(uint32_t *)(0x10005348) = 0x07000000; /* pin 38 -> GPIO */
+	*(uint32_t *)(0x10005358) = 0x00000007; /* pin 40 -> GPIO */
+	*(uint32_t *)(0x1000b1c4) = 0x40; /* EINT 38 SENS -> EDGE */
+	*(uint32_t *)(0x1000b384) = 0x40; /* EINT 38 POL -> LOW */
+	*(uint32_t *)(0x1000b104) = 0x40; /* EINT 38 un-mask */
+
+	while (1) {
+		print_wait_cnt++;
+		if (print_wait_cnt >= 10000) {
+			printf("  Interrupt count: %d \\ %d\n", evt_cnt, rx_Data_wr_idx);
+			printf(" DIR1  0x10005010: 0x%x\n", *(uint32_t *)(0x10005010));
+			printf(" DOUT  0x10005110: 0x%x\n", *(uint32_t *)(0x10005110));
+			printf(" DIN   0x10005210: 0x%x\n", *(uint32_t *)(0x10005210));
+			printf(" MODE4 0x10005340: 0x%x\n", *(uint32_t *)(0x10005340));
+			printf(" MODE5 0x10005350: 0x%x\n", *(uint32_t *)(0x10005350));
+			printf(" MASK1 0x1000b084: 0x%x\n", *(uint32_t *)(0x1000b084));
+
+			print_wait_cnt = 0;
+		}
+
+		wait_loop();
 	}
 
 	return 0;

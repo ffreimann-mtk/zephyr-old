@@ -9,9 +9,15 @@
 
 
 &pinctrl {
-   	uart1_default: uart1_default {
+	uart1_default: uart1_default {
 		group1 {
-        	pinmux = <PINMUX_PIN_37_URXD1__FUNC_URXD1>, <PINMUX_PIN_38_UTXD1__FUNC_UTXD1>;
-        };
-    };
+			pinmux = <PINMUX_PIN_37_URXD1__FUNC_URXD1>, <PINMUX_PIN_38_UTXD1__FUNC_UTXD1>;
+		};
+	};
+		i2s_default: i2s_default {
+		pinmux = <PINMUX_PIN_72_CMDAT4__FUNC_I2S3_BCK>,
+			 <PINMUX_PIN_73_CMDAT5__FUNC_I2S3_LRCK>,
+			 <PINMUX_PIN_74_CMDAT6__FUNC_I2S3_MCK>,
+			 <PINMUX_PIN_75_CMDAT7__FUNC_I2S3_DO>;
+	};
 };

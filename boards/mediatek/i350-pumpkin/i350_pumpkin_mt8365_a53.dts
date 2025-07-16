@@ -61,7 +61,7 @@
 };
 
 &gpio96_127 {
-   	status = "okay";
+	status = "okay";
 };
 
 &uart1 {
@@ -69,5 +69,11 @@
 	pinctrl-names = "default";
 	current-speed = <115200>;
     clock-frequency = <27>;
+	status = "okay";
+};
+
+&i2s {
+	pinctrl-0 = <&i2s_default>;
+	pinctrl-names = "default";
 	status = "okay";
 };
