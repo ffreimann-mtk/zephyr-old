@@ -1,0 +1,7 @@
+board:
+  name: i350_pumpkin
+  full_name: i350 Pumpkin (4*Cortex-A53)
+  vendor: mediatek
+  socs:
+  - name: mt8365
+
