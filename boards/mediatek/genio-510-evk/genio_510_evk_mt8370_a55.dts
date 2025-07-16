@@ -1,0 +1,55 @@
+/*
+ * Copyright 2025 MediaTek
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+#include <mem.h>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <mediatek/mt8370.dtsi>
+#include "genio_510_evk-pinctrl.dtsi"
+
+/ {
+	model = "MediaTek GENION 510 EVK (4*Cortex-A55 and 2*Cortex-A78)";
+	compatible = "mediatek,mt8370-evk";
+
+	aliases {
+	};
+
+	chosen {
+		zephyr,console = &uart1;
+		zephyr,sram = &dram;
+	};
+
+	cpus {
+		cpu@0 {
+			status = "disabled";
+		};
+		cpu@100 {
+			status = "disabled";
+		};
+		cpu@200 {
+			status = "disabled";
+		};
+		cpu@600 {
+			status = "disabled";
+		};
+		cpu@700 {
+			status = "disabled";
+		};
+	};
+
+	dram: memory@8000 {
+		reg = <0x00008000 DT_SIZE_M(2)>;
+	};
+};
+
+&uart1 {
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-names = "default";
+	current-speed = <115200>;
+    clock-frequency = <27>;
+	status = "okay";
+};
