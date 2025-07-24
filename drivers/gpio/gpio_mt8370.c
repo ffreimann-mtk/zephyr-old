@@ -302,8 +302,6 @@ static int gpio_mtk_port_toggle_bits(const struct device *dev, gpio_port_pins_t 
 static int gpio_mtk_pin_interrupt_configure(const struct device *dev, gpio_pin_t pin,
 					    enum gpio_int_mode mode, enum gpio_int_trig trig)
 {
-	// const gpio_mtk_config_t* gpio_config = dev->config;
-
 	return 0;
 }
 

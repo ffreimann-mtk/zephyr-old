@@ -147,7 +147,7 @@ typedef struct {
 typedef struct {
 	DEVICE_MMIO_RAM; /* Must be first */
 	struct k_spinlock lock;
-	sys_slist_t *eint_callbacks;
+	sys_slist_t eint_callbacks;
 } eint_mtk_data_t;
 
 static inline uint32_t line_to_bit_mask(uint8_t line);
@@ -243,7 +243,6 @@ static void eint_mtk_isr(const struct device *dev)
 
 static int eint_mtk_init(const struct device *dev)
 {
-	int ret;
 	eint_mtk_data_t *eint_data = dev->data;
 	const eint_mtk_config_t *eint_config = dev->config;
 

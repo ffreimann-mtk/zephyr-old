@@ -287,8 +287,6 @@ static int gpio_mtk_port_toggle_bits(const struct device *dev, gpio_port_pins_t 
 static int gpio_mtk_pin_interrupt_configure(const struct device *dev, gpio_pin_t pin,
 					    enum gpio_int_mode mode, enum gpio_int_trig trig)
 {
-	const gpio_mtk_config_t *gpio_config = dev->config;
-
 	return 0;
 }
 
@@ -306,7 +304,7 @@ static int gpio_mtk_manage_callback(const struct device *dev, struct gpio_callba
 static void eint_handler(const struct device *dev, uint8_t line, void *arg)
 {
 	gpio_mtk_data_t *gpio_data = dev->data;
-	gpio_mtk_config_t *gpio_config = dev->config;
+	const gpio_mtk_config_t *gpio_config = dev->config;
 
 	if (line >= (gpio_config->idx * 32)) {
 		line -= (gpio_config->idx * 32);
@@ -319,7 +317,7 @@ static int gpio_mtk_init(const struct device *dev)
 {
 	int ret;
 	gpio_mtk_data_t *gpio_data = dev->data;
-	gpio_mtk_config_t *gpio_config = dev->config;
+	const gpio_mtk_config_t *gpio_config = dev->config;
 
 	DEVICE_MMIO_NAMED_MAP(dev, reg_base, K_MEM_CACHE_NONE);
 
