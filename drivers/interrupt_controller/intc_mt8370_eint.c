@@ -171,7 +171,6 @@ typedef struct {
 typedef struct {
 	DEVICE_MMIO_RAM; /* Must be first */
 	struct k_spinlock lock;
-//	sys_slist_t *eint_callbacks;
 	sys_slist_t eint_callbacks;
 } eint_mtk_data_t;
 
