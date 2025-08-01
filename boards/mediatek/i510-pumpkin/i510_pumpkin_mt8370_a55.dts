@@ -1,0 +1,79 @@
+/*
+ * Copyright 2025 MediaTek
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+#include <mem.h>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <mediatek/mt8370.dtsi>
+#include "i510_pumpkin-pinctrl.dtsi"
+
+/ {
+	model = "MediaTek i510 Pumpkin (4*Cortex-A55 and 2*Cortex-A78)";
+	compatible = "mediatek,mt8370-pumpkin";
+
+	aliases {
+		trigger = &trigger_gpio;
+		response = &response_gpio;
+	};
+
+	chosen {
+		zephyr,console = &uart1;
+		zephyr,sram = &dram;
+	};
+
+	trigger {
+		compatible = "gpio-keys";
+
+		trigger_gpio: trigger-gpio {
+			gpios = <&gpio0_31 0 GPIO_ACTIVE_LOW>;  /* GPIO 0 */
+			label = "Event Trigger";
+		};
+    };
+
+	response {
+		compatible = "gpio-leds";
+
+		response_gpio: response-pgio {
+			gpios = <&gpio0_31 1 GPIO_ACTIVE_LOW>;  /* GPIO 1 */
+			label = "Event Response";
+		};
+	};
+
+	cpus {
+		cpu@0 {
+			status = "disabled";
+		};
+		cpu@100 {
+			status = "disabled";
+		};
+		cpu@200 {
+			status = "disabled";
+		};
+		cpu@600 {
+			status = "disabled";
+		};
+		cpu@700 {
+			status = "disabled";
+		};
+	};
+
+	dram: memory@8000 {
+		reg = <0x00008000 DT_SIZE_M(2)>;
+	};
+};
+
+&gpio0_31 {
+	status = "okay";
+};
+
+&uart1 {
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-names = "default";
+	current-speed = <115200>;
+    clock-frequency = <27>;
+	status = "okay";
+};
