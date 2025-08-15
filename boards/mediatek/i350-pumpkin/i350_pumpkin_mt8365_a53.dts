@@ -71,9 +71,3 @@
     clock-frequency = <27>;
 	status = "okay";
 };
-
-&i2s {
-	pinctrl-0 = <&i2s_default>;
-	pinctrl-names = "default";
-	status = "okay";
-};
